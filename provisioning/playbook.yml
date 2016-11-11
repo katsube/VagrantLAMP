@@ -1,0 +1,206 @@
+- hosts: servers
+  sudo: yes
+  vars:
+        mysql_root_pw: "vagrant"
+  tasks:
+    #-----------------------------------------------------
+    # OS
+    #-----------------------------------------------------
+    #-- SELinux Off --#
+    - name: SELinux Disable
+      command: setenforce 0
+      ignore_errors: True
+    - name: Edit SELinux config
+      lineinfile: >-
+        dest='/etc/selinux/config'
+        state=present
+        backrefs=yes
+        regexp='^SELINUX=enforcing'
+        line='SELINUX=disabled'
+
+    #-----------------------------------------------------
+    # yum
+    #-----------------------------------------------------
+    #-- リポジトリ追加 --#
+    - name: install yum repos
+      yum: name={{ item }} state=present
+      with_items:
+        - epel-release
+        - /vagrant/provisioning/rpm/remi-release-7.rpm
+        - /vagrant/provisioning/rpm/mysql57-community-release-el7-7.noarch.rpm
+    
+    #-- 全パッケージ更新 --#
+    - name: upgrade all yum packages
+      yum: name=* state=latest
+
+
+    #-----------------------------------------------------
+    # VCS
+    #-----------------------------------------------------
+    #-- Git, Svn --#
+    - name: install VCS (Git/Svn)
+      yum: name={{ item }} state=present
+      with_items:
+        - git
+        - subversion
+        - subversion-devel
+
+
+    #-----------------------------------------------------
+    # Apache
+    #-----------------------------------------------------
+    #-- Apache追加(入ってなければ) --#
+    - name: install Apache
+      yum: name=httpd state=present
+
+    #-- Virtualhostの設定ファイルをコピー --#
+    - name: copy VirtualHost
+      copy: src=conf/vhost.conf dest=/etc/httpd/conf.d/vhost.conf owner=root group=root mode=0644 
+      notify:
+        - apache restart
+
+    #-- Apacheを起動 --#
+    - name: start Apache
+      service: name=httpd state=started
+
+
+    #-----------------------------------------------------
+    # PHP
+    #-----------------------------------------------------
+    #-- 大元のPHP --#
+    - name: install PHP
+      yum: name={{ item }} state=present enablerepo=remi
+      with_items:
+        - php56
+        - php56-php
+        - php56-php-devel
+        - php56-php-cli
+        - php56-php-common
+      notify:
+        - apache restart
+
+    #-- ln -s /usr/bin/php56 /usr/bin/php--#
+    - name: Make symlink for PHP
+      file: state=link src=/usr/bin/php56 dest=/usr/bin/php
+
+    #-- モジュールは別タスクで入れる --#
+    - name: install PHP Module
+      yum: name={{ item }} state=present enablerepo=remi
+      with_items:
+        - php56-php-mbstring
+        - php56-php-mysqlnd
+        - php56-php-pdo
+        - php56-php-pecl-memcache
+        - php56-php-mcrypt
+        - php56-php-pecl-xdebug
+      notify:
+        - apache restart
+
+    #-- php.ini編集 --#
+    - name: Edit php.ini
+      lineinfile: >-
+        dest='/opt/remi/php56/root/etc/php.ini'
+        state=present
+        backrefs=yes
+        regexp="{{item.regexp}}"
+        line="{{item.line}}"
+      with_items:
+        # display_errors
+        - { regexp: '^display_errors = Off', line: 'display_errors = On' }
+        # timezone
+        - { regexp: '^;date.timezone =', line: 'date.timezone = Asia/Tokyo' }
+        # mbstring
+        - { regexp: '^;mbstring.language = Japanese',         line: 'mbstring.language = Japanese' }
+        - { regexp: '^;mbstring.internal_encoding =',         line: 'mbstring.internal_encoding = UTF-8' }
+        - { regexp: '^;mbstring.http_input =',                line: 'mbstring.http_input = pass' }
+        - { regexp: '^;mbstring.http_output =',               line: 'mbstring.http_output = pass' }
+        - { regexp: '^;mbstring.encoding_translation = Off',  line: 'mbstring.encoding_translation = Off' }
+        - { regexp: '^;mbstring.detect_order = auto',         line: 'mbstring.detect_order = UTF-8,SJIS,EUC-JP,JIS,ASCII' }
+        - { regexp: '^;mbstring.substitute_character = none', line: 'mbstring.substitute_character = none' }
+        - { regexp: '^;mbstring.func_overload = 0',           line: 'mbstring.func_overload = 0' }
+        - { regexp: '^;mbstring.strict_detection = On',       line: 'mbstring.strict_detection = Off' }
+      notify:
+        - apache restart
+
+
+    #-----------------------------------------------------
+    # MySQL
+    #-----------------------------------------------------
+    #-- MySQL5.6を入れる --#
+    - name: install MySQL
+      yum: name={{ item }} state=present enablerepo=mysql56-community
+      with_items:
+        - mysql-community-server-5.6.34-2.el7
+        - mysql-community-client-5.6.34-2.el7
+        - mysql-community-common-5.6.34-2.el7
+        - mysql-community-devel-5.6.34-2.el7
+        - mysql-community-libs-5.6.34-2.el7
+        - MySQL-python
+
+    #-- my.cnfをコピー --#
+    - name: copy /etc/my.cnf
+      copy: src=conf/my.cnf dest=/etc/my.cnfowner=root group=root mode=0644
+
+    #-- MySQL5.6を起動 --#
+    - name: start MySQL
+      service: name=mysqld state=started
+
+    #-- rootのパスワード変更 --#
+    - stat: path=/root/.my.cnf
+      register: is_file_myconf
+    - name: change root password for MySQL
+      mysql_user:
+        name: root
+        host: localhost
+        password: "{{ mysql_root_pw }}"
+        login_user: root
+        login_password: ""
+      when: is_file_myconf.stat.md5 is not defined
+
+    #-- rootのパスワードをファイルに記録 --#
+    - name: set ~/.my.cnf
+      template:
+        src: conf/my.cnf.j2
+        dest: /root/.my.cnf
+        mode: 0600
+      when: is_file_myconf.stat.md5 is not defined
+
+
+    #-----------------------------------------------------
+    # Memcached
+    #-----------------------------------------------------
+    - name: install Memcached
+      yum: name={{ item }} state=present enablerepo=remi
+      with_items:
+        - memcached
+        - memcached-devel
+      notify:
+        - memcached start
+
+
+    #-----------------------------------------------------
+    # 自動起動
+    #-----------------------------------------------------
+    - name: chkconfig on
+      service: name={{ item }} enabled=yes 
+      with_items:
+        - httpd
+        - mysqld
+        - memcached
+
+  #-----------------------------------------------------
+  # handler
+  #-----------------------------------------------------
+  handlers:
+     - name: apache start
+       service: name=httpd state=started
+     - name: apache restart
+       service: name=httpd state=restarted
+
+     - name: mysql start
+       service: name=mysqld state=started
+     - name: mysql restart
+       service: name=mysqld state=restarted
+
+     - name: memcached start
+       service: name=memcached state=started
