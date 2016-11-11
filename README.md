@@ -6,8 +6,9 @@
 ### ホスト
 
 + MacOSX ElCapitan (10.11.6)
++ VirtualBox
++ Vagrant
 + Ansible
-
 
 ### ゲスト 
 
