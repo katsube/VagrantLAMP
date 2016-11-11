@@ -2,16 +2,20 @@
 ローカルのCentOS7上にLAMP環境を構築するためのファイル郡。自分用に作成しているので、汎用性等はあまり考慮いていません。奇特にも利用いようという方はFork後に各自でカスタマイズしてください。
 
 ## 想定環境
-* ホスト
-＊＊ MacOSX ElCapitan (10.11.6)
-*** Provision: Ansible
 
-* ゲスト 
-** centos/7
-*** Apache 2.4
-*** MySQL 5.6
-*** PHP 5.6
-*** Memcached, Git, Svn ...
+### ホスト
+
++ MacOSX ElCapitan (10.11.6)
++ Ansible
+
+
+### ゲスト 
+
++ centos/7
++ Apache 2.4
++ MySQL 5.6
+* PHP 5.6
++ Memcached, Git, Svn ...
 
 ## ホストの環境設定
 provisioning用にAnsibleを入れる。
