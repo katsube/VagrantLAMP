@@ -147,7 +147,7 @@
 
     #-- my.cnfをコピー --#
     - name: copy /etc/my.cnf
-      copy: src=conf/my.cnf dest=/etc/my.cnfowner=root group=root mode=0644
+      copy: src=conf/my.cnf dest=/etc/my.cnf owner=root group=root mode=0644
 
     #-- MySQL5.6を起動 --#
     - name: start MySQL
