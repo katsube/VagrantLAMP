@@ -6,6 +6,10 @@
     #-----------------------------------------------------
     # OS
     #-----------------------------------------------------
+    #-- TimeZone --#
+    - name: set timezone to Asia/Tokyo
+      timezone: name=Asia/Tokyo
+
     #-- SELinux Off --#
     - name: SELinux Disable
       command: setenforce 0
