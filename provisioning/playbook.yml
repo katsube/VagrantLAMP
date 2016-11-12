@@ -23,6 +23,7 @@
         dest='/etc/selinux/config'
         state=present
         backrefs=yes
+        backup=yes
         regexp='^SELINUX=enforcing'
         line='SELINUX=disabled'
 
@@ -40,7 +41,6 @@
     #-- 全パッケージ更新 --#
     - name: upgrade all yum packages
       yum: name=* state=latest
-
 
     #-----------------------------------------------------
     # VCS
@@ -110,6 +110,7 @@
         dest='/opt/remi/php56/root/etc/php.ini'
         state=present
         backrefs=yes
+        backup=yes
         regexp="{{item.regexp}}"
         line="{{item.line}}"
       with_items:
@@ -136,13 +137,13 @@
     #-----------------------------------------------------
     #-- MySQL5.6を入れる --#
     - name: install MySQL
-      yum: name={{ item }} state=present enablerepo=mysql56-community
+      yum: name={{ item }} state=present enablerepo=mysql56-community disablerepo=mysql57-community
       with_items:
+        - mysql-community-common-5.6.34-2.el7
+        - mysql-community-libs-5.6.34-2.el7
+        - mysql-community-devel-5.6.34-2.el7
         - mysql-community-server-5.6.34-2.el7
         - mysql-community-client-5.6.34-2.el7
-        - mysql-community-common-5.6.34-2.el7
-        - mysql-community-devel-5.6.34-2.el7
-        - mysql-community-libs-5.6.34-2.el7
         - MySQL-python
 
     #-- my.cnfをコピー --#
