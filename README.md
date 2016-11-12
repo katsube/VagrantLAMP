@@ -29,11 +29,10 @@ provisioning用にAnsibleを入れる。
 	  configured module search path = Default w/o overrides
 
 ### sshfs
-* インストール「FUSE for MacOS」 https://osxfuse.github.io/
-* FUSE導入後に以下をbrewなどで入れる
-
 	$ brew install homebrew/fuse/sshfs
 	$ sshfs --version
+
+事前に「FUSE for MacOS」をインストール https://osxfuse.github.io/
 
 
 ### vagrant plugin
