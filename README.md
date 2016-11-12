@@ -51,6 +51,7 @@ sshfs以外はお好みで。
 	192.168.11.50   vagrant
 
 ## 起動
+	$ mkdir foobar; cd foobar
 	$ vagrant init centos/7
 	$ vagrant up
 
