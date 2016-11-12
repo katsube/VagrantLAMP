@@ -19,7 +19,9 @@
 + Memcached, Git, Svn ...
 
 ## ホストの環境設定
-provisioning用にAnsibleを入れる。
+### VirtualBox, Vagrant
+* VirtualBox https://www.virtualbox.org/
+* Vagrant https://www.vagrantup.com/
 
 ### Ansible
 	$ brew install ansible
@@ -32,13 +34,17 @@ provisioning用にAnsibleを入れる。
 	$ brew install homebrew/fuse/sshfs
 	$ sshfs --version
 
-事前に「FUSE for MacOS」をインストール https://osxfuse.github.io/
+事前に「FUSE for MacOS」をインストールする必要あり。
+https://osxfuse.github.io/
 
 
 ### vagrant plugin
-	$ vagrant plugin install vagrant-cachier
 	$ vagrant plugin install vagrant-sshfs
+	$ vagrant plugin install vagrant-cachier
 	$ vagrant plugin install vagrant-vbguest
+
+sshfs以外はお好みで。
+
 
 ### hostsを編集
 	$ vi /private/etc/hosts
