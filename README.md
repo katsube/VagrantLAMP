@@ -28,6 +28,10 @@ provisioning用にAnsibleを入れる。
 	  config file = 
 	  configured module search path = Default w/o overrides
 
+### hosts
+	$ vi /private/etc/hosts
+	192.168.11.50   vagrant
+
 ### Provisioningの準備
 #### RPM
 	$ cd provisioning/rpm
@@ -45,8 +49,12 @@ provisioning用にAnsibleを入れる。
 	$ vagrant init centos/7
 	$ vagrant up
 
+## 利用方法
+* http://vagrant/info.php にアクセスし phpinfo()が表示されれば成功
+* htdocsがドキュメントルートになっているので、この下ファイルを置いたり、シンボリックリンク貼ったりすればOK。
 
 ## メモ
+* デフォの共有フォルダの形式だと、なぜかファイルがリアルタイムに同期されなかったので(vagrant reloadしないと見れない…)、ひとまずsshfsにしてます。
 * $HOME/.vagrant.d/boxes/ の下に大元のイメージファイルが保存れる
 
 #### MySQL5.7の設定が面倒だったので、5.6を入れる。
