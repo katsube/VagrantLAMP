@@ -33,6 +33,9 @@
 ### sshfs
 	$ brew install homebrew/fuse/sshfs
 	$ sshfs --version
+	SSHFS version 2.8
+	OSXFUSE 3.5.3
+	FUSE library version: 2.9.7
 
 事前に「FUSE for MacOS」をインストールする必要あり。
 https://osxfuse.github.io/
