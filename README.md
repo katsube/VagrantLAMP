@@ -47,7 +47,6 @@ provisioning用にAnsibleを入れる。
 
 ## メモ
 * デフォの共有フォルダの形式だと、なぜかファイルがリアルタイムに同期されなかったので(vagrant reloadしないと見れない…)、ひとまずsshfsにしてます。
-* $HOME/.vagrant.d/boxes/ の下に大元のイメージファイルが保存れる
 
 #### MySQL5.7の設定が面倒だったので、5.6を入れる。
 	$ yum --showduplicates --enablerepo=mysql56-community list | grep mysql-community | grep 5.6.
@@ -56,3 +55,7 @@ provisioning用にAnsibleを入れる。
 #### yumリポジトリの取得元
 	$ wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
 	$ wget http://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm	
+
+#### 備忘録
+* ~/.vagrant.d/boxes/ の下に大元のイメージファイルが保存される
+* .vagrant/machines/default/virtualbox 下に秘密鍵など
