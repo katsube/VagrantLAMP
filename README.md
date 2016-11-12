@@ -32,14 +32,6 @@ provisioning用にAnsibleを入れる。
 	$ vi /private/etc/hosts
 	192.168.11.50   vagrant
 
-### Provisioningの準備
-#### RPM
-	$ cd provisioning/rpm
-	$ wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-	$ wget http://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm	
-
-※上記はリポジトリに含まれています。
-
 ### vagrant plugin
 	$ vagrant plugin install vagrant-cachier
 	$ vagrant plugin install vagrant-sshfs
@@ -51,7 +43,7 @@ provisioning用にAnsibleを入れる。
 
 ## 利用方法
 * http://vagrant/info.php にアクセスし phpinfo()が表示されれば成功
-* htdocsがドキュメントルートになっているので、この下ファイルを置いたり、シンボリックリンク貼ったりすればOK。
+* htdocs/がドキュメントルートなので、この下にファイルを置いたり、シンボリックリンク貼ればOK。
 
 ## メモ
 * デフォの共有フォルダの形式だと、なぜかファイルがリアルタイムに同期されなかったので(vagrant reloadしないと見れない…)、ひとまずsshfsにしてます。
@@ -61,3 +53,6 @@ provisioning用にAnsibleを入れる。
 	$ yum --showduplicates --enablerepo=mysql56-community list | grep mysql-community | grep 5.6.
 	$ sudo yum --enablerepo=mysql56-community install mysql-community-server-5.6.34-2.el7 
 
+#### yumリポジトリの取得元
+	$ wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+	$ wget http://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm	
