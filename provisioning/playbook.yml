@@ -37,10 +37,10 @@
         - epel-release
         - /vagrant/provisioning/rpm/remi-release-7.rpm
         - /vagrant/provisioning/rpm/mysql57-community-release-el7-7.noarch.rpm
-    
+
     #-- 全パッケージ更新 --#
     - name: upgrade all yum packages
-      yum: name=* state=latest
+      yum: name=* state=latest enablerepo=mysql56-community disablerepo=mysql57-community
 
     #-----------------------------------------------------
     # VCS
@@ -141,10 +141,12 @@
       with_items:
         - mysql-community-common-5.6.34-2.el7
         - mysql-community-libs-5.6.34-2.el7
-        - mysql-community-devel-5.6.34-2.el7
         - mysql-community-server-5.6.34-2.el7
         - mysql-community-client-5.6.34-2.el7
-        - MySQL-python
+        - mysql-community-devel-5.6.34-2.el7
+
+    - name: install MySQL-Python
+      yum: name=MySQL-python state=present
 
     #-- my.cnfをコピー --#
     - name: copy /etc/my.cnf
@@ -153,6 +155,10 @@
     #-- MySQL5.6を起動 --#
     - name: start MySQL
       service: name=mysqld state=started
+
+    #-- mysql_upgradeを実行 --#
+    #- name: Run MySQL upgrade
+    #  shell: mysql_upgrade --skip-write-binlog
 
     #-- rootのパスワード変更 --#
     - stat: path=/root/.my.cnf
