@@ -36,6 +36,11 @@ provisioning用にAnsibleを入れる。
 
 ※上記はリポジトリに含まれています。
 
+### vagrant plugin
+	$ vagrant plugin install vagrant-cachier
+	$ vagrant plugin install vagrant-sshfs
+	$ vagrant plugin install vagrant-vbguest
+
 ## 起動
 	$ vagrant init centos/7
 	$ vagrant up
