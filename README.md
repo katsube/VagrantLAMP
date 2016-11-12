@@ -28,14 +28,22 @@ provisioning用にAnsibleを入れる。
 	  config file = 
 	  configured module search path = Default w/o overrides
 
-### hosts
-	$ vi /private/etc/hosts
-	192.168.11.50   vagrant
+### sshfs
+* インストール「FUSE for MacOS」 https://osxfuse.github.io/
+* FUSE導入後に以下をbrewなどで入れる
+
+	$ brew install homebrew/fuse/sshfs
+	$ sshfs --version
+
 
 ### vagrant plugin
 	$ vagrant plugin install vagrant-cachier
 	$ vagrant plugin install vagrant-sshfs
 	$ vagrant plugin install vagrant-vbguest
+
+### hostsを編集
+	$ vi /private/etc/hosts
+	192.168.11.50   vagrant
 
 ## 起動
 	$ vagrant init centos/7
