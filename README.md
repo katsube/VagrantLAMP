@@ -59,7 +59,7 @@ sshfs以外はお好みで。
 	$ vagrant up
 
 ## 利用方法
-* http://vagrant/info.php にアクセスし phpinfo()が表示されれば成功
+* http://vagrant/info.php にアクセスし `phpinfo()` が表示されれば成功
 * htdocs/がドキュメントルートなので、この下にファイルを置いたり、シンボリックリンク貼ればOK。
 
 ## メモ
